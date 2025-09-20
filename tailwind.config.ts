@@ -47,16 +47,33 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        // Custom NeuroHaven colors
+        "gold-accent": "hsl(var(--gold-accent))",
+        "olive-soft": "hsl(var(--olive-soft))",
+        "taupe-light": "hsl(var(--taupe-light))",
+        "ivory-warm": "hsl(var(--ivory-warm))",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-warm": "var(--gradient-warm)",
+        "gradient-gold": "var(--gradient-gold)",
+      },
+      boxShadow: {
+        "soft": "var(--shadow-soft)",
+        "warm": "var(--shadow-warm)",
+        "elegant": "var(--shadow-elegant)",
+      },
+      transitionTimingFunction: {
+        "smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "elegant": "cubic-bezier(0.23, 1, 0.32, 1)",
       },
       borderRadius: {
         lg: "var(--radius)",
