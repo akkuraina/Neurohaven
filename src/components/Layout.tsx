@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, Menu, X, Brain, Users, Calendar, BookOpen, Activity, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationCenter from "./NotificationCenter";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Activity },
@@ -20,6 +21,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const location = useLocation();
 
   return (
@@ -59,7 +61,12 @@ export function Layout({ children }: LayoutProps) {
 
             {/* User Actions */}
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="relative hover-glow">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative hover-glow"
+                onClick={() => setNotificationOpen(true)}
+              >
                 <Bell className="w-4 h-4" />
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full"></span>
               </Button>
@@ -109,6 +116,11 @@ export function Layout({ children }: LayoutProps) {
           </div>
         )}
       </nav>
+
+      <NotificationCenter 
+        isOpen={notificationOpen}
+        onClose={() => setNotificationOpen(false)}
+      />
 
       <main>{children}</main>
     </div>

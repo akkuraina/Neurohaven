@@ -14,10 +14,15 @@ import {
   MessageCircle,
   Plus,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Settings,
+  Bell,
+  Target,
+  Zap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
+import SilentSOS from "@/components/SilentSOS";
 
 const quickStats = [
   {
@@ -101,9 +106,32 @@ const aiInsights = [
 
 export default function Dashboard() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("week");
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: "mood", message: "Time for your daily mood check-in", time: "10 min ago", read: false },
+    { id: 2, type: "pod", message: "New message in Study Support Pod", time: "2 hours ago", read: false },
+    { id: 3, type: "session", message: "VR meditation session completed", time: "1 day ago", read: true }
+  ]);
+  const [goals, setGoals] = useState([
+    { id: 1, title: "Daily Meditation", current: 4, target: 7, unit: "sessions" },
+    { id: 2, title: "Mood Logging", current: 6, target: 7, unit: "days" },
+    { id: 3, title: "Peer Connections", current: 8, target: 10, unit: "interactions" }
+  ]);
+
+  const handleNotificationAction = (id: number, action: string) => {
+    if (action === "dismiss") {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    } else if (action === "mark-read") {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    }
+  };
+
+  const handleSOSAlert = () => {
+    console.log("SOS Alert triggered - emergency support initiated");
+  };
 
   return (
     <Layout>
+      <SilentSOS onEmergencyCall={handleSOSAlert} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
         <div className="mb-8">
@@ -146,6 +174,96 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Notifications Center */}
+            <Card className="card-premium">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Bell className="w-5 h-5 text-accent" />
+                    <span>Notifications</span>
+                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {notifications.filter(n => !n.read).length} new
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {notifications.slice(0, 3).map((notification) => (
+                  <div key={notification.id} className={`p-4 rounded-lg border transition-all hover:shadow-sm ${
+                    notification.read ? 'bg-muted/20' : 'bg-accent/5 border-accent/20'
+                  }`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground text-sm">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {notification.time}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {!notification.read && (
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={() => handleNotificationAction(notification.id, 'mark-read')}
+                            className="text-xs"
+                          >
+                            Mark read
+                          </Button>
+                        )}
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleNotificationAction(notification.id, 'dismiss')}
+                          className="text-xs"
+                        >
+                          Dismiss
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Goals Tracking */}
+            <Card className="card-warm">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Target className="w-5 h-5 text-accent" />
+                  <span>Weekly Goals</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {goals.map((goal) => (
+                  <div key={goal.id} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-foreground">
+                          {goal.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {goal.current} of {goal.target} {goal.unit}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-semibold text-primary">
+                          {Math.round((goal.current / goal.target) * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                    <Progress value={(goal.current / goal.target) * 100} className="h-2" />
+                  </div>
+                ))}
+                
+                <Button size="sm" variant="outline" className="w-full btn-minimal">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Customize Goals
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* AI Insights */}
             <Card className="card-warm">
               <CardHeader>
@@ -172,7 +290,7 @@ export default function Dashboard() {
                           <Progress value={insight.confidence} className="w-20 h-1" />
                         </div>
                       </div>
-                      <Button size="sm" variant="ghost" className="btn-minimal">
+                      <Button size="sm" variant="ghost" className="btn-minimal hover-lift">
                         Apply
                       </Button>
                     </div>
@@ -184,7 +302,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
+            {/* Enhanced Quick Actions */}
             <Card className="card-premium">
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
@@ -192,43 +310,61 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <Link to="/emotion-twin">
-                    <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                      <Brain className="w-6 h-6" />
-                      <span className="text-sm">Log Mood</span>
+                    <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                      <Brain className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <div className="text-center">
+                        <span className="text-sm font-medium">Log Mood</span>
+                        <p className="text-xs text-muted-foreground">AI Analysis</p>
+                      </div>
                     </Button>
                   </Link>
                   
                   <Link to="/journal">
-                    <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                      <BookOpen className="w-6 h-6" />
-                      <span className="text-sm">Write Journal</span>
+                    <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                      <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <div className="text-center">
+                        <span className="text-sm font-medium">Write Journal</span>
+                        <p className="text-xs text-muted-foreground">Daily Reflection</p>
+                      </div>
                     </Button>
                   </Link>
                   
                   <Link to="/calmscapes">
-                    <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                      <MessageCircle className="w-6 h-6" />
-                      <span className="text-sm">Start Session</span>
+                    <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                      <Zap className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <div className="text-center">
+                        <span className="text-sm font-medium">Start Session</span>
+                        <p className="text-xs text-muted-foreground">VR Meditation</p>
+                      </div>
                     </Button>
                   </Link>
                   
                   <Link to="/peer-pods">
-                    <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                      <Users className="w-6 h-6" />
-                      <span className="text-sm">Join Pod</span>
+                    <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                      <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <div className="text-center">
+                        <span className="text-sm font-medium">Join Pod</span>
+                        <p className="text-xs text-muted-foreground">Connect & Share</p>
+                      </div>
                     </Button>
                   </Link>
                   
                   <Link to="/counselor">
-                    <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                      <Calendar className="w-6 h-6" />
-                      <span className="text-sm">Book Session</span>
+                    <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                      <Calendar className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <div className="text-center">
+                        <span className="text-sm font-medium">Book Session</span>
+                        <p className="text-xs text-muted-foreground">Counselor Care</p>
+                      </div>
                     </Button>
                   </Link>
                   
-                  <Button variant="outline" className="w-full h-20 flex-col space-y-2 hover-lift">
-                    <Plus className="w-6 h-6" />
-                    <span className="text-sm">More Actions</span>
+                  <Button variant="outline" className="w-full h-24 flex-col space-y-2 hover-lift group">
+                    <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                    <div className="text-center">
+                      <span className="text-sm font-medium">More Actions</span>
+                      <p className="text-xs text-muted-foreground">Explore Features</p>
+                    </div>
                   </Button>
                 </div>
               </CardContent>

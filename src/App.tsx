@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import EmotionTwin from "./pages/EmotionTwin";
 import PeerPods from "./pages/PeerPods";
 import Journal from "./pages/Journal";
+import Calmscapes from "./pages/Calmscapes";
+import CounselorCare from "./pages/CounselorCare";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,8 +26,8 @@ const App = () => (
           <Route path="/emotion-twin" element={<EmotionTwin />} />
           <Route path="/peer-pods" element={<PeerPods />} />
           <Route path="/journal" element={<Journal />} />
-          <Route path="/counselor" element={<Dashboard />} />
-          <Route path="/calmscapes" element={<Dashboard />} />
+          <Route path="/counselor" element={<CounselorCare />} />
+          <Route path="/calmscapes" element={<Calmscapes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
